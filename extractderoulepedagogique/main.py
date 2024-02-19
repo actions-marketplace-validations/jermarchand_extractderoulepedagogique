@@ -15,7 +15,7 @@ import ruamel.yaml
 
 TAG_RE = re.compile(r"<[^>]+>")
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def _remove_tags(content: str) -> str:
@@ -313,6 +313,7 @@ def main(argv: Sequence[str] | None = None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "path",
+        default="/github/workspace",
         help="Path where to find `PLAN.md` and `Slides\slides.json`.",
     )
     args = parser.parse_args(argv)
