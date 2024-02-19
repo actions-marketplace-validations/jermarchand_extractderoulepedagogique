@@ -1,26 +1,45 @@
-FROM python:3.11-buster as builder
+############ Stage ############
+FROM python:3.11-buster as python-base
 
-RUN pip install poetry==1.4.2
+# https://python-poetry.org/docs#ci-recommendations
+ENV POETRY_VERSION=1.3.2
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VENV=/opt/poetry-venv
 
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+# Tell Poetry where to place its cache and virtual environment
+ENV POETRY_CACHE_DIR=/opt/.cache
+
+############ Stage ############
+# Create stage for Poetry installation
+FROM python-base as poetry-base
+
+# Install poetry separated from system interpreter
+RUN python3 -m venv $POETRY_VENV \
+	&& $POETRY_VENV/bin/pip install -U pip setuptools \
+	&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+
+############ Stage ############
+# Create a new stage from the base python image
+FROM python-base as my-app
+
+# Copy Poetry to app image
+COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
+
+# Add Poetry to PATH
+ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
-RUN touch README.md
+# Copy Dependencies
+COPY poetry.lock ./
+COPY pyproject.toml ./
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --no-root
+# [OPTIONAL] Validate the project is properly configured
+RUN poetry check
 
-FROM python:3.11-slim-buster as runtime
+# Install Dependencies
+RUN poetry install --no-interaction --no-cache --without dev
 
-ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH"
+COPY . /app
 
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-
-COPY extractderoulepedagogique ./extractderoulepedagogique
-
-ENTRYPOINT ["python", "-m", "extractderoulepedagogique.main"]
+CMD ["poetry", "run", "python", "-m", "extractderoulepedagogique.main"]
