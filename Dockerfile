@@ -4,7 +4,7 @@ FROM python:3.11-buster as python-base
 # https://python-poetry.org/docs#ci-recommendations
 ENV POETRY_VERSION=1.3.2
 ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=~/poetry-venv
+ENV POETRY_VENV=/opt/poetry-venv
 
 # Tell Poetry where to place its cache and virtual environment
 ENV POETRY_CACHE_DIR=/opt/.cache
