@@ -39,4 +39,6 @@ RUN poetry env info
 
 COPY . .
 
+RUN ls
+
 ENTRYPOINT ["poetry","run","extractderoulepedagogique"]
