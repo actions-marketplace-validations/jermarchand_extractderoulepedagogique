@@ -41,4 +41,4 @@ COPY . .
 
 RUN ls
 
-ENTRYPOINT ["poetry","run", "python", "/extractderoulepedagogique/main.py"]
+ENTRYPOINT ["poetry","run", "python", "/extractderoulepedagogique/main.py", "/github/workspace"]
