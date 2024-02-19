@@ -4,14 +4,14 @@ FROM python:3.11-buster as python-base
 # https://python-poetry.org/docs#ci-recommendations
 ENV POETRY_VERSION=1.3.2
 ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=/opt/poetry-venv
+ENV POETRY_VENV=~/poetry-venv
 
 # Tell Poetry where to place its cache and virtual environment
 ENV POETRY_CACHE_DIR=/opt/.cache
 
 ############ Stage ############
 # Create stage for Poetry installation
-FROM python-base as poetry-base
+#FROM python-base as poetry-base
 
 # Install poetry separated from system interpreter
 RUN python3 -m venv $POETRY_VENV \
@@ -20,10 +20,10 @@ RUN python3 -m venv $POETRY_VENV \
 
 ############ Stage ############
 # Create a new stage from the base python image
-FROM python-base as my-app
+#FROM python-base as my-app
 
 # Copy Poetry to app image
-COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
+#COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
 
 # Add Poetry to PATH
 ENV PATH="${PATH}:${POETRY_VENV}/bin"
