@@ -42,4 +42,4 @@ RUN poetry install --no-interaction --no-cache --without dev
 
 COPY . /app
 
-CMD ["poetry", "run", "python", "-m", "extractderoulepedagogique.main"]
+#CMD ["poetry", "run", "python", "-m", "extractderoulepedagogique.main"]
