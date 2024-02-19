@@ -15,7 +15,7 @@ import ruamel.yaml
 
 TAG_RE = re.compile(r"<[^>]+>")
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def _remove_tags(content: str) -> str:
@@ -260,7 +260,7 @@ def _save_in_csv_format_after_merge_with_prev_version(
         _merge_with_previous_version(csv_filename, toc)
 
     logging.info("Save extract in " + csv_filename + " file")
-    with open(csv_filename, "w", newline="") as file:
+    with open(csv_filename, "w", newline="\n") as file:
 
         writer = csv.DictWriter(file, fieldnames=fields, delimiter=";")
 
