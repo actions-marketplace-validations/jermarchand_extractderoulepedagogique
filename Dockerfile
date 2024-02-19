@@ -31,10 +31,10 @@ COPY poetry.lock ./
 COPY pyproject.toml ./
 
 # [OPTIONAL] Validate the project is properly configured
-RUN poetry env info
 RUN poetry check
 
 # Install Dependencies
 RUN poetry install --no-interaction --no-cache --without dev
+RUN poetry env info
 
 COPY . .
