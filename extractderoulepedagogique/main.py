@@ -173,7 +173,7 @@ def _merge_with_previous_version(csv_filename: str, toc: list):
     prev_csv_indexed = {}
 
     # index prev_csv_filename, by title
-    with open(prev_csv_filename, newline="") as existing_csvfile:
+    with open(prev_csv_filename, newline="\n") as existing_csvfile:
         existing_csv_content = csv.reader(existing_csvfile, delimiter=";")
 
         for row in existing_csv_content:
@@ -262,7 +262,14 @@ def _save_in_csv_format_after_merge_with_prev_version(
     logging.info("Save extract in " + csv_filename + " file")
     with open(csv_filename, "w", newline="\n") as file:
 
-        writer = csv.DictWriter(file, fieldnames=fields, delimiter=";")
+        writer = csv.DictWriter(
+            file,
+            fieldnames=fields,
+            delimiter=";",
+            dialect="unix",
+            quotechar=None,
+            quoting=csv.QUOTE_NONE,
+        )
 
         # write the header
         writer.writeheader()
