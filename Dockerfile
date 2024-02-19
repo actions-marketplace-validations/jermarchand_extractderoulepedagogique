@@ -39,4 +39,4 @@ RUN poetry env info
 
 COPY . .
 
-ENTRYPOINT ["poetry env info"]
+ENTRYPOINT ["poetry","env","info"]
