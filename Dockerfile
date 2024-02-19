@@ -38,3 +38,5 @@ RUN poetry install --no-interaction --no-cache --without dev
 RUN poetry env info
 
 COPY . .
+
+ENTRYPOINT ["poetry env info"]
