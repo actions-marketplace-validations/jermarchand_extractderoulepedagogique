@@ -42,4 +42,4 @@ RUN poetry install --no-interaction --no-cache --without dev
 
 COPY . /app
 
-CMD ["poetry", "env", "info"]
+RUN poetry env info
