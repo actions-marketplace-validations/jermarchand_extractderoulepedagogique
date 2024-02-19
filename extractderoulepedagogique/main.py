@@ -166,7 +166,7 @@ def _merge_with_previous_version(csv_filename: str, toc: list):
     """
     logging.info("Merge with previous extract " + csv_filename + " file")
 
-    prev_csv_filename = "tmp/tmp.csv"
+    prev_csv_filename = "/tmp/tmp.csv"
     logging.info("Moving from " + csv_filename + " to " + prev_csv_filename)
     shutil.move(csv_filename, prev_csv_filename)
 

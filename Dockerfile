@@ -39,6 +39,4 @@ RUN poetry env info
 
 COPY . .
 
-RUN ls
-
 ENTRYPOINT ["poetry","run", "python", "/extractderoulepedagogique/main.py", "/github/workspace"]
