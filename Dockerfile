@@ -1,45 +1,40 @@
 ############ Stage ############
-FROM python:3.11-buster as python-base
+FROM python:3.11-buster as python-poetry-base
 
 # https://python-poetry.org/docs#ci-recommendations
 ENV POETRY_VERSION=1.3.2
 ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=/opt/poetry-venv
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV POETRY_NO_INTERACTION=1
+ENV PATH="$POETRY_HOME/bin:$PATH"
 
-# Tell Poetry where to place its cache and virtual environment
-ENV POETRY_CACHE_DIR=/opt/.cache
 
-############ Stage ############
-# Create stage for Poetry installation
-#FROM python-base as poetry-base
+###############################################################################
+# POETRY BUILDER IMAGE - Installs Poetry and dependencies
+###############################################################################
+FROM python-poetry-base AS python-poetry-builder
+RUN apt-get update \
+    && apt-get install --no-install-recommends --assume-yes curl
+# Install Poetry via the official installer: https://python-poetry.org/docs/master/#installing-with-the-official-installer
+# This script respects $POETRY_VERSION & $POETRY_HOME
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Install poetry separated from system interpreter
-RUN python3 -m venv $POETRY_VENV \
-	&& $POETRY_VENV/bin/pip install -U pip setuptools \
-	&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
 
-############ Stage ############
-# Create a new stage from the base python image
-#FROM python-base as my-app
-
-# Copy Poetry to app image
-#COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
-
-# Add Poetry to PATH
-ENV PATH="${PATH}:${POETRY_VENV}/bin"
-
-WORKDIR /app
+###############################################################################
+# POETRY RUNTIME IMAGE - Copies the poetry installation into a smaller image
+###############################################################################
+FROM python-poetry-base AS python-poetry
+COPY --from=python-poetry-builder $POETRY_HOME $POETRY_HOME
 
 # Copy Dependencies
 COPY poetry.lock ./
 COPY pyproject.toml ./
 
 # [OPTIONAL] Validate the project is properly configured
+RUN poetry env info
 RUN poetry check
 
 # Install Dependencies
 RUN poetry install --no-interaction --no-cache --without dev
 
-COPY . /app
-
-RUN poetry env info
+COPY . .
