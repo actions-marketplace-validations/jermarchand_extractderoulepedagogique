@@ -39,4 +39,4 @@ RUN poetry env info
 
 COPY . .
 
-ENTRYPOINT ["poetry","run","python", "extractderoulepedagogique/main.py"]
+ENTRYPOINT ["poetry","run","extractderoulepedagogique"]
